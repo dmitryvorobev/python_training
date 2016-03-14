@@ -17,7 +17,6 @@ class add_contact(unittest.TestCase):
         self.wd.implicitly_wait(60)
     
     def test_add_contact(self):
-
         wd = self.wd
         self.open_home_page(wd)
         self.login(wd)
@@ -25,11 +24,9 @@ class add_contact(unittest.TestCase):
         self.logout(wd)
 
     def logout(self, wd):
-        # logout
         wd.find_element_by_link_text("Logout").click()
 
     def add_contact_fill_form(self, wd, Person):
-        # add contact
         wd.find_element_by_link_text("add new").click()
         wd.find_element_by_name("firstname").click()
         wd.find_element_by_name("firstname").clear()
@@ -56,7 +53,6 @@ class add_contact(unittest.TestCase):
         wd.find_element_by_xpath("//div[@id='content']/form/input[21]").click()
 
     def login(self, wd):
-        # login
         wd.find_element_by_name("user").click()
         wd.find_element_by_name("user").clear()
         wd.find_element_by_name("user").send_keys("admin")
@@ -66,7 +62,6 @@ class add_contact(unittest.TestCase):
         wd.find_element_by_xpath("//form[@id='LoginForm']/input[3]").click()
 
     def open_home_page(self, wd):
-        # open home page
         wd.get("http://localhost/addressbook/")
 
     def tearDown(self):
