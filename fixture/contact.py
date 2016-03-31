@@ -70,3 +70,8 @@ class ContactHelper:
         wd.find_element_by_xpath("//div[@id='content']/form/input[21]").click()
 
         wd.find_element_by_xpath("//form/input[@value='Update'][1]").click()
+
+
+    def count(self):
+        wd = self.app.wd
+        return len(wd.find_elements_by_xpath("//td/input[@name='selected[]']"))
