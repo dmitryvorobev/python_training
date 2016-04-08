@@ -11,6 +11,7 @@ class ContactHelper:
         wd.find_element_by_link_text("add new").click()
         self.fill_contact_form(Person)
         wd.find_element_by_xpath("//div[@id='content']/form/input[21]").click()
+        self.contact_cash = None
 
     def delete_first_contact(self):
         wd = self.app.wd
@@ -18,6 +19,7 @@ class ContactHelper:
         wd.find_element_by_xpath("//tr[2]/td/input[@name='selected[]']").click()
         wd.find_element_by_xpath("//div/input[@value='Delete']").click()
         wd.switch_to_alert().accept()
+        self.contact_cash = None
 
     def edit_contact(self, Person):
         wd = self.app.wd
@@ -29,10 +31,11 @@ class ContactHelper:
         self.fill_contact_form(Person)
         wd.find_element_by_xpath("//div[@id='content']/form/input[21]").click()
         wd.find_element_by_xpath("//form/input[@value='Update'][1]").click()
-
+        self.contact_cash = None
 
     def count(self):
         wd = self.app.wd
+        self.open_contacts_page()
         return len(wd.find_elements_by_xpath("//td/input[@name='selected[]']"))
 
     def change_field(self, field_name, text):
@@ -60,15 +63,17 @@ class ContactHelper:
         if not(wd.current_url.endswith("addressbook/")):
             wd.find_element_by_link_text("home").click()
 
+    contact_cash = None
 
     def get_contact_list(self):
-        wd = self.app.wd
-        self.open_contacts_page()
-        contacts = []
-        for element in wd.find_elements_by_xpath("//tbody/tr[@name='entry']"):
-            name = element.find_element_by_xpath("./td[3]").text
-            surname = element.find_element_by_xpath("./td[2]").text
-            id = element.find_element_by_xpath("./td/input").get_attribute("id")
-            contacts.append(Person(firstname=name,lastname=surname, id=id))
-        return contacts
+        if self.contact_cash is None:
+            wd = self.app.wd
+            self.open_contacts_page()
+            self.contact_cash = []
+            for element in wd.find_elements_by_xpath("//tbody/tr[@name='entry']"):
+                name = element.find_element_by_xpath("./td[3]").text
+                surname = element.find_element_by_xpath("./td[2]").text
+                id = element.find_element_by_xpath("./td/input").get_attribute("id")
+                self.contact_cash.append(Person(firstname=name,lastname=surname, id=id))
+        return list(self.contact_cash)
 
