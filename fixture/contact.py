@@ -1,4 +1,4 @@
-
+from model.person import Person
 
 class ContactHelper:
 
@@ -59,3 +59,16 @@ class ContactHelper:
         wd = self.app.wd
         if not(wd.current_url.endswith("addressbook/")):
             wd.find_element_by_link_text("home").click()
+
+
+    def get_contact_list(self):
+        wd = self.app.wd
+        self.open_contacts_page()
+        contacts = []
+        for element in wd.find_elements_by_xpath("//tbody/tr[@name='entry']"):
+            name = element.find_element_by_xpath("./td[3]").text
+            surname = element.find_element_by_xpath("./td[2]").text
+            id = element.find_element_by_xpath("./td/input").get_attribute("id")
+            contacts.append(Person(firstname=name,lastname=surname, id=id))
+        return contacts
+
