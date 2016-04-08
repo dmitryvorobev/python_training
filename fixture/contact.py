@@ -13,21 +13,32 @@ class ContactHelper:
         wd.find_element_by_xpath("//div[@id='content']/form/input[21]").click()
         self.contact_cash = None
 
-    def delete_first_contact(self):
+    def delete_contact_by_index(self,index):
         wd = self.app.wd
         self.open_contacts_page()
-        wd.find_element_by_xpath("//tr[2]/td/input[@name='selected[]']").click()
+        self.select_contact_by_index(index)
         wd.find_element_by_xpath("//div/input[@value='Delete']").click()
         wd.switch_to_alert().accept()
         self.contact_cash = None
 
-    def edit_contact(self, Person):
+    def select_contact_by_index(self, index):
         wd = self.app.wd
         self.open_contacts_page()
-        #select first
-        wd.find_element_by_xpath("//tr[2]/td/input[@name='selected[]']").click()
-        #click edit by first
-        wd.find_element_by_xpath("//tr[2]/td/a/img[@title='Edit']").click()
+        wd.find_elements_by_name("selected[]")[index].click()
+
+    def click_edit_contact_by_index(self, index):
+        wd = self.app.wd
+        self.open_contacts_page()
+        wd.find_elements_by_xpath("//img[@title='Edit']")[index].click()
+
+    def delete_first_contact(self):
+        wd = self.app.wd
+        self.delete_contact_by_index(0)
+
+    def edit_contact_by_index(self, index, Person):
+        wd = self.app.wd
+        self.open_contacts_page()
+        self.click_edit_contact_by_index(index)
         self.fill_contact_form(Person)
         wd.find_element_by_xpath("//div[@id='content']/form/input[21]").click()
         wd.find_element_by_xpath("//form/input[@value='Update'][1]").click()
