@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from model.group import Group
-from sys import maxsize
+
+
 
 
 def test_add_group(app):
     old_groups = app.group.get_group_list()
-    group = Group(name="sdfgh", header="lkjhg", footer="poiuy")
+    group = Group(name="1asdfgh", header="wertyhg", footer="zxcvbn")
     app.group.create(group)
     assert len(old_groups) + 1 == app.group.count()
     new_groups = app.group.get_group_list()

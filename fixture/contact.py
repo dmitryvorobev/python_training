@@ -1,4 +1,5 @@
 from model.person import Person
+import random
 
 class ContactHelper:
 
@@ -10,8 +11,15 @@ class ContactHelper:
         self.open_contacts_page()
         wd.find_element_by_link_text("add new").click()
         self.fill_contact_form(Person)
-        wd.find_element_by_xpath("//div[@id='content']/form/input[21]").click()
+        self.push_enter_button()
         self.contact_cash = None
+
+    def push_enter_button(self):
+        wd = self.app.wd
+        try:
+            wd.find_element_by_xpath("//input[@name='submit'][1]").click()
+        except:
+            wd.find_element_by_xpath("//input[@value='Update'][1]").click()
 
     def delete_contact_by_index(self,index):
         wd = self.app.wd
@@ -26,7 +34,7 @@ class ContactHelper:
         self.open_contacts_page()
         wd.find_elements_by_name("selected[]")[index].click()
 
-    def click_edit_contact_by_index(self, index):
+    def click_edit_btn_on_contact_by_index(self, index):
         wd = self.app.wd
         self.open_contacts_page()
         wd.find_elements_by_xpath("//img[@title='Edit']")[index].click()
@@ -38,10 +46,10 @@ class ContactHelper:
     def edit_contact_by_index(self, index, Person):
         wd = self.app.wd
         self.open_contacts_page()
-        self.click_edit_contact_by_index(index)
+        self.click_edit_btn_on_contact_by_index(index)
         self.fill_contact_form(Person)
-        wd.find_element_by_xpath("//div[@id='content']/form/input[21]").click()
-        wd.find_element_by_xpath("//form/input[@value='Update'][1]").click()
+        self.push_enter_button()
+
         self.contact_cash = None
 
     def count(self):
@@ -64,10 +72,17 @@ class ContactHelper:
         self.change_field("address",Person.address)
         self.change_field("home",Person.home_phone_num)
         self.change_field("byear",Person.year)
-        if not wd.find_element_by_xpath("//div[@id='content']/form/select[1]//option[3]").is_selected():
-            wd.find_element_by_xpath("//div[@id='content']/form/select[1]//option[3]").click()
-        if not wd.find_element_by_xpath("//div[@id='content']/form/select[2]//option[3]").is_selected():
-            wd.find_element_by_xpath("//div[@id='content']/form/select[2]//option[3]").click()
+        day_list = []
+        for element in wd.find_elements_by_xpath("//select[@name='bday']/option"):
+            day_list.append(element.text)
+        day=random.randrange(2,len(day_list)-2)
+        wd.find_elements_by_xpath("//select[@name='bday']/option")[day].click()
+        month_list = []
+        for element in wd.find_elements_by_xpath("//select[@name='bmonth']/option"):
+            month_list.append(element.text)
+        month=random.randrange(2,len(month_list)-2)
+        wd.find_elements_by_xpath("//select[@name='bmonth']/option")[month].click()
+
 
     def open_contacts_page(self):
         wd = self.app.wd
@@ -87,4 +102,3 @@ class ContactHelper:
                 id = element.find_element_by_xpath("./td/input").get_attribute("id")
                 self.contact_cash.append(Person(firstname=name,lastname=surname, id=id))
         return list(self.contact_cash)
-
