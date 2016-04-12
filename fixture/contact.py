@@ -1,5 +1,6 @@
 from model.person import Person
 import random
+import re
 
 class ContactHelper:
 
@@ -11,10 +12,10 @@ class ContactHelper:
         self.open_contacts_page()
         wd.find_element_by_link_text("add new").click()
         self.fill_contact_form(Person)
-        self.push_enter_button()
+        self.push_submit_button()
         self.contact_cash = None
 
-    def push_enter_button(self):
+    def push_submit_button(self):
         wd = self.app.wd
         try:
             wd.find_element_by_xpath("//input[@name='submit'][1]").click()
@@ -34,10 +35,15 @@ class ContactHelper:
         self.open_contacts_page()
         wd.find_elements_by_name("selected[]")[index].click()
 
-    def click_edit_btn_on_contact_by_index(self, index):
+    def open_contact_to_edit_by_index(self, index):
         wd = self.app.wd
         self.open_contacts_page()
         wd.find_elements_by_xpath("//img[@title='Edit']")[index].click()
+
+    def open_contact_by_index(self, index):
+        wd = self.app.wd
+        self.open_contacts_page()
+        wd.find_elements_by_xpath("//img[@title='Details']")[index].click()
 
     def delete_first_contact(self):
         wd = self.app.wd
@@ -46,10 +52,9 @@ class ContactHelper:
     def edit_contact_by_index(self, index, Person):
         wd = self.app.wd
         self.open_contacts_page()
-        self.click_edit_btn_on_contact_by_index(index)
+        self.open_contact_to_edit_by_index(index)
         self.fill_contact_form(Person)
-        self.push_enter_button()
-
+        self.push_submit_button()
         self.contact_cash = None
 
     def count(self):
@@ -100,5 +105,37 @@ class ContactHelper:
                 name = element.find_element_by_xpath("./td[3]").text
                 surname = element.find_element_by_xpath("./td[2]").text
                 id = element.find_element_by_xpath("./td/input").get_attribute("id")
-                self.contact_cash.append(Person(firstname=name,lastname=surname, id=id))
+                all_phones = element.find_element_by_xpath("./td[6]").text
+                if len(all_phones)>1:
+                    self.contact_cash.append(Person(firstname=name,lastname=surname, id=id,
+                                                    all_phones_from_home_page=all_phones))
+                else:
+                    self.contact_cash.append(Person(firstname=name,lastname=surname, id=id,
+                                                    home_phone_num=all_phones[0]))
         return list(self.contact_cash)
+
+    def get_contact_info_from_edit_page(self, index):
+        wd = self.app.wd
+        self.open_contact_to_edit_by_index(index)
+        firstname = wd.find_element_by_name("firstname").get_attribute("value")
+        lastname = wd.find_element_by_name("lastname").get_attribute("value")
+        id = wd.find_element_by_name("id").get_attribute("value")
+        home_phone_num = wd.find_element_by_name("home").get_attribute("value")
+        mobile_phone_num = wd.find_element_by_name("mobile").get_attribute("value")
+        workphone_num = wd.find_element_by_name("work").get_attribute("value")
+        secondary_num = wd.find_element_by_name("phone2").get_attribute("value")
+        return Person(firstname=firstname,lastname=lastname,home_phone_num=home_phone_num,mobile_phone_num=mobile_phone_num,
+                      workphone_num=workphone_num,secondary_num=secondary_num,id=id)
+
+
+    def get_contact_from_view_page(self,index):
+        wd = self.app.wd
+        self.open_contact_by_index(index)
+        text = wd.find_element_by_id("content").text
+        home_phone_num = re.search("H: (.*)",text).group(1)
+        mobile_phone_num = re.search("M: (.*)",text).group(1)
+        workphone_num = re.search("W: (.*)",text).group(1)
+        secondary_num = re.search("P: (.*)",text).group(1)
+        return Person(home_phone_num=home_phone_num,mobile_phone_num=mobile_phone_num,
+                      workphone_num=workphone_num,secondary_num=secondary_num)
+
