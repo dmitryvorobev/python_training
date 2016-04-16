@@ -17,7 +17,7 @@ class Person:
 
 
     def __repr__(self):
-        return "%s:%s:%s" % (self.id, self.firstname, self.lastname)
+        return "%s:%s:%s:%s:%s:%s" % (self.id, self.firstname, self.lastname,self.company,self.address,self.year)
 
 
     def __eq__(self, other):

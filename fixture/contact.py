@@ -77,16 +77,17 @@ class ContactHelper:
         self.change_field("address",Person.address)
         self.change_field("home",Person.home_phone_num)
         self.change_field("byear",Person.year)
-        day_list = []
-        for element in wd.find_elements_by_xpath("//select[@name='bday']/option"):
-            day_list.append(element.text)
-        day=random.randrange(2,len(day_list)-2)
-        wd.find_elements_by_xpath("//select[@name='bday']/option")[day].click()
-        month_list = []
-        for element in wd.find_elements_by_xpath("//select[@name='bmonth']/option"):
-            month_list.append(element.text)
-        month=random.randrange(2,len(month_list)-2)
-        wd.find_elements_by_xpath("//select[@name='bmonth']/option")[month].click()
+        if Person.firstname != "":
+            day_list = []
+            for element in wd.find_elements_by_xpath("//select[@name='bday']/option"):
+                day_list.append(element.text)
+            day=random.randrange(2,len(day_list)-2)
+            wd.find_elements_by_xpath("//select[@name='bday']/option")[day].click()
+            month_list = []
+            for element in wd.find_elements_by_xpath("//select[@name='bmonth']/option"):
+                month_list.append(element.text)
+            month=random.randrange(2,len(month_list)-2)
+            wd.find_elements_by_xpath("//select[@name='bmonth']/option")[month].click()
 
 
     def open_contacts_page(self):
@@ -110,8 +111,7 @@ class ContactHelper:
                     self.contact_cash.append(Person(firstname=name,lastname=surname, id=id,
                                                     all_phones_from_home_page=all_phones))
                 else:
-                    self.contact_cash.append(Person(firstname=name,lastname=surname, id=id,
-                                                    home_phone_num=all_phones[0]))
+                    self.contact_cash.append(Person(firstname=name,lastname=surname, id=id))
         return list(self.contact_cash)
 
     def get_contact_info_from_edit_page(self, index):
