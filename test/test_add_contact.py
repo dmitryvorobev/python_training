@@ -4,16 +4,6 @@ import pytest
 import random
 import string
 
-def random_string(prefix,maxlen):
-    symbol = string.ascii_letters+string.digits+string.punctuation+" "*10
-    return prefix + "".join([random.choice(symbol) for i in range(random.randrange(maxlen))])
-
-
-test_data = [Person(firstname="", lastname="", company="", address="",home_phone_num="",year="")] + [
-    Person(firstname=random_string("firstname",10), lastname=random_string("lastname",20), company=random_string("company",20),
-           address=random_string("address",40),home_phone_num=random_string("home_phone_num",20),year=random_string("",5))
-    for i in range(5)
-    ]
 
 @pytest.mark.parametrize("contact",test_data, ids=[repr(x) for x in test_data])
 def test_add_contact(app, contact):
