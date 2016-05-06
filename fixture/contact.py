@@ -30,10 +30,23 @@ class ContactHelper:
         wd.switch_to_alert().accept()
         self.contact_cash = None
 
+    def delete_contact_by_id(self,id):
+        wd = self.app.wd
+        self.open_contacts_page()
+        self.select_contact_by_id(id)
+        wd.find_element_by_xpath("//div/input[@value='Delete']").click()
+        wd.switch_to_alert().accept()
+        self.contact_cash = None
+
     def select_contact_by_index(self, index):
         wd = self.app.wd
         self.open_contacts_page()
         wd.find_elements_by_name("selected[]")[index].click()
+
+    def select_contact_by_id(self, id):
+        wd = self.app.wd
+        self.open_contacts_page()
+        wd.find_element_by_xpath("//input[@id=%s]" % id).click()
 
     def open_contact_to_edit_by_index(self, index):
         wd = self.app.wd
