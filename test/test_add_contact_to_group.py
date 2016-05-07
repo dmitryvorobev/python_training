@@ -15,7 +15,12 @@ def test_add_contact_to_group(app,db,check_ui):
 
     old_contacts = db.get_contact_list()
     contact = random.choice(old_contacts)
-    app.contact.add_contact_to_group_by_id(contact.id)
+
+    old_groups = db.get_group_list()
+    group = random.choice(old_groups)
+
+    app.contact.add_contact_to_group_by_id(contact.id,group.name)
+    l=len(app.contact.get_contact_list_by_group(group))
 
     assert len(old_contacts) - 1 == app.contact.count()
     if check_ui:

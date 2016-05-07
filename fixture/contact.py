@@ -38,15 +38,16 @@ class ContactHelper:
         wd.switch_to_alert().accept()
         self.contact_cash = None
 
-    def add_contact_to_group_by_id(self,id):
+    def add_contact_to_group_by_id(self,id,selected_group):
         wd = self.app.wd
         self.open_contacts_page()
         self.select_contact_by_id(id)
-        groups = self.get_groups_list_from_contact_page()
-        selected_group = random.choice(groups)
+        # groups = self.get_groups_list_from_contact_page()
+        # selected_group = random.choice(groups)
         wd.find_element_by_xpath("//select[@name='to_group']").click()
         wd.find_element_by_xpath("//select[@name='to_group']/option[text()='%s']" % selected_group).click()
-        wd.find_element_by_xpath("//input[@name='add']").click()
+        wd.find_element_by_xpath("//input[@value='Add to']").click()
+        wd.find_element_by_xpath("//a[contains(.,'%s')]" % selected_group).click()
 
 
     def select_contact_by_index(self, index):
@@ -147,6 +148,23 @@ class ContactHelper:
                 else:
                     self.contact_cash.append(Person(firstname=name,lastname=surname, id=id))
         return list(self.contact_cash)
+
+    def get_contact_list_by_group(self,group):
+            wd = self.app.wd
+            wd.get("http://localhost/addressbook/?group=%s" % group)
+            self.contact_cash = []
+            for element in wd.find_elements_by_xpath("//tbody/tr[@name='entry']"):
+                name = element.find_element_by_xpath("./td[3]").text
+                surname = element.find_element_by_xpath("./td[2]").text
+                id = element.find_element_by_xpath("./td/input").get_attribute("id")
+                all_phones = element.find_element_by_xpath("./td[6]").text
+                if len(all_phones)>1:
+                    self.contact_cash.append(Person(firstname=name,lastname=surname, id=id,
+                                                    all_phones_from_home_page=all_phones))
+                else:
+                    self.contact_cash.append(Person(firstname=name,lastname=surname, id=id))
+            return list(self.contact_cash)
+
 
     def get_contact_info_from_edit_page(self, index):
         wd = self.app.wd
