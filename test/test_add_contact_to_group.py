@@ -20,9 +20,12 @@ def test_add_contact_to_group(app,db,check_ui):
     group = random.choice(old_groups)
 
     app.contact.add_contact_to_group_by_id(contact.id,group.name)
-    l=len(app.contact.get_contact_list_by_group(group))
 
-    assert len(old_contacts) - 1 == app.contact.count()
+    l1=len(app.contact.get_contact_list_by_group(group))
+    l2=len(db.get_contact_list_by_group(group))
+
+    assert l1 == l2
+
     if check_ui:
         def clean(contact):
             return Person(id=contact.id,firstname=contact.firstname.strip(),lastname=contact.lastname.strip())

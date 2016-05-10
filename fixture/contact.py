@@ -1,6 +1,7 @@
 from model.person import Person
 import random
 import re
+from selenium.webdriver.support import select
 
 class ContactHelper:
 
@@ -44,10 +45,13 @@ class ContactHelper:
         self.select_contact_by_id(id)
         # groups = self.get_groups_list_from_contact_page()
         # selected_group = random.choice(groups)
-        wd.find_element_by_xpath("//select[@name='to_group']").click()
-        wd.find_element_by_xpath("//select[@name='to_group']/option[text()='%s']" % selected_group).click()
+
+        dropdown = wd.find_element_by_xpath("//select[@name='to_group']")
+        select_list = select.Select(dropdown)
+        select_list.select_by_visible_text(selected_group)
         wd.find_element_by_xpath("//input[@value='Add to']").click()
-        wd.find_element_by_xpath("//a[contains(.,'%s')]" % selected_group).click()
+#        self.open_contacts_page()
+
 
 
     def select_contact_by_index(self, index):
@@ -119,7 +123,10 @@ class ContactHelper:
         wd = self.app.wd
         if not(wd.current_url.endswith("addressbook/")):
             wd.find_element_by_link_text("home").click()
-    contact_cash = None
+            dropdown = wd.find_element_by_xpath("//select[@name='group']")
+            select_list = select.Select(dropdown)
+            select_list.select_by_visible_text("[all]")
+        contact_cash = None
 
 
     def get_groups_list_from_contact_page(self):
